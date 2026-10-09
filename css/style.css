@@ -1,0 +1,1207 @@
+/* ==========================================================================
+   TechStore — стили страницы
+   --------------------------------------------------------------------------
+   Оглавление:
+    1. CSS-переменные (светлая и тёмная темы)
+    2. Базовые стили
+    3. Общие компоненты: контейнер, кнопки, фокус, заголовки секций
+    4. Шапка и навигация ............................ FLEXBOX
+    5. Общий макет страницы <main> + <aside> ........ GRID (grid-template-areas)
+    6. Первый экран (hero) .......................... FLEXBOX
+    7. Секция «Преимущества» ........................ FLEXBOX
+    8. Секция «Популярные товары» ................... GRID + hover-анимация
+    9. Сайдбар <aside>
+   10. Подвал ....................................... FLEXBOX
+   11. Адаптивность и prefers-reduced-motion
+   ========================================================================== */
+
+
+/* ==========================================================================
+   1. CSS-ПЕРЕМЕННЫЕ (кастомные свойства)
+   Все цвета, отступы, размеры шрифтов, радиусы и тени заданы здесь.
+   Компоненты ниже используют только var(--...), поэтому для смены темы
+   достаточно переопределить значения переменных — см. [data-theme="dark"].
+   ========================================================================== */
+:root {
+  /* --- Цвета: светлая тема (по умолчанию) --- */
+  --color-bg: #f4f6fb;
+  --color-surface: #ffffff;
+  --color-surface-alt: #eef1ff;
+  --color-text: #1b2333;
+  --color-text-muted: #5b6577;
+  --color-border: #dfe4ee;
+  --color-primary: #3b5bfd;
+  --color-primary-hover: #2743d6;
+  --color-on-primary: #ffffff;
+  --color-accent: #ff6b3d;
+  --color-success: #17a362;
+  --color-star: #f5a623;
+  --color-focus: #ffb020;
+  --color-header-bg: rgba(255, 255, 255, 0.85);
+  --color-footer-bg: #151b2b;
+  --color-footer-text: #c3cbdd;
+
+  /* Градиенты фона (тоже переменные — меняются вместе с темой) */
+  --gradient-hero: linear-gradient(135deg, #e8edff 0%, #f6efff 55%, #fff1ea 100%);
+  --gradient-media: linear-gradient(135deg, #eef2ff, #f6f0ff);
+  --gradient-media-alt: linear-gradient(135deg, #fff3ec, #ffeef6);
+  --gradient-promo: linear-gradient(140deg, #3b5bfd 0%, #8b5cf6 100%);
+
+  /* --- Отступы (шкала) --- */
+  --space-xs: 4px;
+  --space-s: 8px;
+  --space-m: 16px;
+  --space-l: 24px;
+  --space-xl: 40px;
+  --space-xxl: 64px;
+
+  /* --- Типографика --- */
+  --font-family: "Manrope", "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+  --fs-xs: 0.8125rem;   /* 13px */
+  --fs-s: 0.875rem;     /* 14px */
+  --fs-m: 1rem;         /* 16px */
+  --fs-l: 1.25rem;      /* 20px */
+  --fs-xl: 1.75rem;     /* 28px */
+  --fs-xxl: clamp(2rem, 1.2rem + 3.2vw, 3.25rem); /* «резиновый» h1 */
+
+  /* --- Размеры, радиусы, тени, анимация --- */
+  --container-width: 1200px;
+  --sidebar-width: 290px;
+  --header-height: 68px;
+  --radius-s: 8px;
+  --radius-m: 16px;
+  --radius-l: 24px;
+  --radius-pill: 999px;
+  --shadow-s: 0 1px 3px rgba(20, 30, 60, 0.08);
+  --shadow-m: 0 8px 24px -8px rgba(20, 30, 60, 0.18);
+  --shadow-l: 0 20px 40px -12px rgba(20, 30, 60, 0.28);
+  --transition: 0.25s ease;
+
+  color-scheme: light;
+}
+
+/* --- Тёмная тема: переопределяем ТОЛЬКО значения переменных ---
+   Атрибут data-theme="dark" ставит на <html> скрипт js/theme.js */
+[data-theme="dark"] {
+  --color-bg: #0e1320;
+  --color-surface: #161d2e;
+  --color-surface-alt: #1d2640;
+  --color-text: #e6eaf3;
+  --color-text-muted: #9aa5bd;
+  --color-border: #283149;
+  --color-primary: #7389ff;
+  --color-primary-hover: #93a4ff;
+  --color-on-primary: #0e1320;
+  --color-accent: #ff8a5c;
+  --color-success: #35c987;
+  --color-header-bg: rgba(14, 19, 32, 0.85);
+  --color-footer-bg: #090d16;
+
+  --gradient-hero: linear-gradient(135deg, #1a2342 0%, #221c3d 55%, #2a1d26 100%);
+  --gradient-media: linear-gradient(135deg, #1e2742, #251f3e);
+  --gradient-media-alt: linear-gradient(135deg, #2b2233, #2c1f2e);
+  --gradient-promo: linear-gradient(140deg, #4a62f0 0%, #7c4ddb 100%);
+
+  --shadow-s: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --shadow-m: 0 8px 24px -8px rgba(0, 0, 0, 0.6);
+  --shadow-l: 0 20px 40px -12px rgba(0, 0, 0, 0.75);
+
+  color-scheme: dark; /* тёмные полосы прокрутки и элементы форм */
+}
+
+
+/* ==========================================================================
+   2. БАЗОВЫЕ СТИЛИ
+   ========================================================================== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  /* при переходе по якорю секция не прячется под «липкой» шапкой */
+  scroll-padding-top: calc(var(--header-height) + var(--space-m));
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-family);
+  font-size: var(--fs-m);
+  line-height: 1.6;
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  transition: background-color var(--transition), color var(--transition);
+
+  /* Каркас страницы на GRID: шапка / контент / подвал.
+     Средняя строка 1fr растягивается, поэтому подвал всегда внизу. */
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  min-height: 100vh;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* :where() — групповой селектор с нулевой специфичностью */
+:where(h1, h2, h3, h4, p, figure) {
+  margin: 0;
+}
+
+:where(h1, h2, h3, h4) {
+  line-height: 1.2;
+}
+
+a {
+  color: var(--color-primary);
+}
+
+/* Элемент скрыт визуально, но доступен скринридерам */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+
+/* ==========================================================================
+   3. ОБЩИЕ КОМПОНЕНТЫ
+   ========================================================================== */
+.container {
+  width: min(100% - 2 * var(--space-m), var(--container-width));
+  margin-inline: auto;
+}
+
+/* --- Ссылка «Перейти к содержимому»: прячется за экраном,
+       появляется только при фокусе с клавиатуры (псевдокласс :focus) --- */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: var(--space-m);
+  z-index: 100;
+  padding: var(--space-s) var(--space-m);
+  border-radius: var(--radius-s);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  font-weight: 700;
+  text-decoration: none;
+  transition: top var(--transition);
+}
+
+.skip-link:focus {
+  top: var(--space-m);
+}
+
+/* --- Кнопки --- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-s);
+  padding: 0.75em 1.4em;
+  border: 2px solid transparent;
+  border-radius: var(--radius-pill);
+  font: inherit;
+  font-weight: 700;
+  line-height: 1.2;
+  text-decoration: none;
+  cursor: pointer;
+  /* плавность для hover-анимации (transform + box-shadow) */
+  transition: transform var(--transition), box-shadow var(--transition),
+              background-color var(--transition), color var(--transition),
+              border-color var(--transition);
+}
+
+.btn--primary {
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
+}
+
+/* :hover — кнопка слегка увеличивается и «светится» */
+.btn--primary:hover {
+  background-color: var(--color-primary-hover);
+  transform: scale(1.05);
+  box-shadow: 0 10px 20px -8px var(--color-primary);
+}
+
+.btn--ghost {
+  background-color: transparent;
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+.btn--ghost:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  transform: scale(1.05);
+}
+
+.btn--light {
+  background-color: #ffffff;
+  color: #3b5bfd;
+}
+
+.btn--light:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 20px -8px rgba(0, 0, 0, 0.45);
+}
+
+/* :active — эффект «нажатия» */
+.btn:active {
+  transform: scale(0.96);
+}
+
+.btn--small {
+  padding: 0.55em 1em;
+  font-size: var(--fs-s);
+}
+
+/* --- Фокус ---
+   button:focus — заметная обводка у кнопок в фокусе;
+   :not(:focus-visible) убирает её, если фокус получен кликом мыши,
+   а не клавишей Tab. Для ссылок и полей — сразу :focus-visible. */
+button:focus,
+a:focus-visible,
+input:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
+button:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* --- Заголовок секции (FLEXBOX: заголовок слева, ссылка справа) --- */
+.section-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-m);
+  margin-bottom: var(--space-l);
+}
+
+.section-title {
+  font-size: var(--fs-xl);
+  font-weight: 800;
+}
+
+/* Соседний комбинатор «+»: подзаголовок, идущий сразу после h2 */
+.section-title + .section-lead {
+  margin-top: var(--space-xs);
+  color: var(--color-text-muted);
+}
+
+/* Ссылка «Весь каталог» с анимированным подчёркиванием через ::after */
+.link-more {
+  position: relative;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.link-more::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 100%;
+  height: 2px;
+  background-color: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--transition);
+}
+
+.link-more:hover::after {
+  transform: scaleX(1);
+}
+
+
+/* ==========================================================================
+   4. ШАПКА И НАВИГАЦИЯ — FLEXBOX
+   ========================================================================== */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: var(--color-header-bg);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* FLEXBOX: логотип | меню | кнопки в одну строку,
+   space-between разносит их по краям, align-items центрирует по вертикали */
+.site-header__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-m) var(--space-l);
+  min-height: var(--header-height);
+  padding-block: var(--space-s);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  color: var(--color-text);
+  font-size: var(--fs-l);
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.logo__accent {
+  color: var(--color-primary);
+}
+
+/* FLEXBOX: пункты меню в ряд */
+.nav__list {
+  display: flex;
+  gap: var(--space-xs);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.nav__link {
+  display: block;
+  padding: 0.5em 0.95em;
+  border-radius: var(--radius-pill);
+  color: var(--color-text-muted);
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color var(--transition), color var(--transition);
+}
+
+/* a:hover — подсветка пункта меню */
+.nav__link:hover {
+  color: var(--color-primary);
+  background-color: var(--color-surface-alt);
+}
+
+/* Селектор атрибута: текущий раздел */
+.nav__link[aria-current="page"] {
+  color: var(--color-on-primary);
+  background-color: var(--color-primary);
+}
+
+/* FLEXBOX: кнопки темы и корзины */
+.header__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+}
+
+.icon-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  cursor: pointer;
+  transition: transform var(--transition), color var(--transition), border-color var(--transition);
+}
+
+.icon-btn:hover {
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+  transform: rotate(-12deg) scale(1.08);
+}
+
+/* Иконка темы: по умолчанию «луна», в тёмной теме — «солнце» */
+.theme-toggle__icon--sun {
+  display: none;
+}
+
+[data-theme="dark"] .theme-toggle__icon--sun {
+  display: block;
+}
+
+[data-theme="dark"] .theme-toggle__icon--moon {
+  display: none;
+}
+
+.cart-link__count {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  display: grid;
+  place-items: center;
+  min-width: 18px;
+  height: 18px;
+  padding-inline: 4px;
+  border-radius: var(--radius-pill);
+  background-color: var(--color-accent);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+
+/* ==========================================================================
+   5. ОБЩИЙ МАКЕТ СТРАНИЦЫ — CSS GRID
+   <main> делится на именованные области. Сайдбар <aside> занимает
+   область "sidebar" справа от товаров — он ИНТЕГРИРОВАН в общую сетку.
+
+     ┌───────────── hero ─────────────┐
+     ├─────────── features ───────────┤
+     ├──────── products ──────┬sidebar┤
+     └────────────────────────┴───────┘
+   ========================================================================== */
+.page-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--sidebar-width);
+  grid-template-areas:
+    "hero      hero"
+    "features  features"
+    "products  sidebar";
+  gap: var(--space-xxl) var(--space-xl);
+  padding-block: var(--space-xl) var(--space-xxl);
+}
+
+.hero     { grid-area: hero; }
+.features { grid-area: features; }
+.products { grid-area: products; }
+.sidebar  { grid-area: sidebar; }
+
+
+/* ==========================================================================
+   6. ПЕРВЫЙ ЭКРАН (hero) — FLEXBOX: текст и картинка в две колонки,
+   при нехватке ширины (flex-wrap) картинка переносится вниз
+   ========================================================================== */
+.hero {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-xl);
+  padding: var(--space-xl) var(--space-xxl);
+  border-radius: var(--radius-l);
+  background: var(--gradient-hero);
+  overflow: hidden;
+}
+
+.hero__content {
+  flex: 1 1 380px;
+}
+
+.hero__media {
+  flex: 1 1 300px;
+}
+
+.hero__media img {
+  margin-inline: auto;
+}
+
+.hero__eyebrow {
+  display: inline-block;
+  margin-bottom: var(--space-m);
+  padding: var(--space-xs) var(--space-m);
+  border-radius: var(--radius-pill);
+  background-color: var(--color-surface);
+  color: var(--color-accent);
+  font-size: var(--fs-s);
+  font-weight: 700;
+  box-shadow: var(--shadow-s);
+}
+
+.hero__title {
+  font-size: var(--fs-xxl);
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.hero__title em {
+  font-style: normal;
+  color: var(--color-primary);
+}
+
+.hero__lead {
+  max-width: 52ch;
+  margin-top: var(--space-m);
+  color: var(--color-text-muted);
+  font-size: 1.0625rem;
+}
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-m);
+  margin-top: var(--space-l);
+}
+
+.hero__stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-l);
+  margin: var(--space-xl) 0 0;
+  padding: 0;
+  list-style: none;
+  color: var(--color-text-muted);
+  font-size: var(--fs-s);
+}
+
+.hero__stats strong {
+  display: block;
+  color: var(--color-text);
+  font-size: var(--fs-l);
+  font-weight: 800;
+}
+
+
+/* ==========================================================================
+   7. СЕКЦИЯ «ПРЕИМУЩЕСТВА» — FLEXBOX
+   flex: 1 1 220px — карточки растут поровну, но не уже 220px;
+   flex-wrap переносит их на новую строку на узких экранах
+   ========================================================================== */
+.features__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-l);
+}
+
+.feature {
+  flex: 1 1 220px;
+  display: flex;               /* вложенный flex: иконка, заголовок, текст столбиком */
+  flex-direction: column;
+  gap: var(--space-s);
+  padding: var(--space-l);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-m);
+  background-color: var(--color-surface);
+  transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+}
+
+.feature:hover {
+  transform: translateY(-4px);
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-m);
+}
+
+/* :nth-child(even) — каждая чётная карточка другого оттенка */
+.features__list > .feature:nth-child(even) {
+  background-color: var(--color-surface-alt);
+}
+
+.feature__icon {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  margin-bottom: var(--space-s);
+  border-radius: 14px;
+  background-color: var(--color-surface-alt);
+  font-size: 26px;
+}
+
+.feature:nth-child(even) .feature__icon {
+  background-color: var(--color-surface);
+}
+
+.feature__title {
+  font-size: var(--fs-l);
+  font-weight: 700;
+}
+
+.feature__text {
+  color: var(--color-text-muted);
+  font-size: var(--fs-s);
+}
+
+
+/* ==========================================================================
+   8. СЕКЦИЯ «ПОПУЛЯРНЫЕ ТОВАРЫ» — CSS GRID
+   repeat(auto-fill, minmax(230px, 1fr)): браузер сам считает, сколько
+   колонок шириной от 230px помещается в строку (4 → 3 → 2 → 1),
+   без единого медиазапроса. min(100%, 230px) защищает от переполнения
+   на очень узких экранах.
+   ========================================================================== */
+.products__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr));
+  gap: var(--space-l);
+}
+
+/* Карточка — FLEX-колонка: тело растягивается (flex: 1),
+   поэтому цена и кнопка у всех карточек в ряду на одной линии */
+.product-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-m);
+  background-color: var(--color-surface);
+  box-shadow: var(--shadow-s);
+  transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+}
+
+/* HOVER-АНИМАЦИЯ: карточка приподнимается, тень становится глубже.
+   :focus-within — тот же эффект, когда фокус на кнопке внутри (клавиатура) */
+.product-card:hover,
+.product-card:focus-within {
+  transform: translateY(-6px);
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-l);
+}
+
+/* Бейдж из data-атрибута: селектор атрибута + псевдоэлемент ::before
+   + функция attr() берёт текст прямо из HTML */
+.product-card[data-badge]::before {
+  content: attr(data-badge);
+  position: absolute;
+  top: var(--space-m);
+  left: var(--space-m);
+  z-index: 1;
+  padding: 2px 10px;
+  border-radius: var(--radius-pill);
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+}
+
+.product-card[data-badge="Скидка"]::before {
+  background-color: var(--color-accent);
+  color: #ffffff;
+}
+
+.product-card[data-badge="Новинка"]::before {
+  background-color: var(--color-success);
+  color: #ffffff;
+}
+
+.product-card__media {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 4 / 3;
+  background: var(--gradient-media);
+  overflow: hidden;
+}
+
+/* article:nth-child(even) — у чётных карточек другой фон картинки */
+.products__grid > article:nth-child(even) .product-card__media {
+  background: var(--gradient-media-alt);
+}
+
+.product-card__media img {
+  width: 82%;
+  transition: transform 0.4s ease;
+}
+
+/* Комбинированный селектор: при наведении на КАРТОЧКУ
+   увеличивается картинка ВНУТРИ неё */
+.product-card:hover .product-card__media img {
+  transform: scale(1.08) rotate(-2deg);
+}
+
+.product-card__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+  padding: var(--space-m);
+}
+
+.product-card__category {
+  color: var(--color-primary);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.product-card__title {
+  font-size: 1.125rem;
+  font-weight: 800;
+}
+
+/* Характеристики в строку (FLEXBOX) через разделитель «·» */
+.product-card__specs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--color-text-muted);
+  font-size: var(--fs-xs);
+}
+
+/* :not(:last-child) — точка-разделитель после всех пунктов, кроме последнего */
+.product-card__specs li:not(:last-child)::after {
+  content: "·";
+  margin-left: var(--space-xs);
+}
+
+.product-card__rating {
+  margin-top: auto;            /* прижимает рейтинг к низу тела карточки */
+  font-size: var(--fs-s);
+  font-weight: 700;
+}
+
+.star {
+  color: var(--color-star);
+}
+
+.product-card__reviews {
+  color: var(--color-text-muted);
+  font-weight: 400;
+}
+
+/* FLEXBOX: цена слева, кнопка справа */
+.product-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-s);
+  padding: var(--space-m);
+  border-top: 1px solid var(--color-border);
+}
+
+.product-card__price {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.product-card__price data {
+  font-size: var(--fs-l);
+  font-weight: 800;
+}
+
+/* Дочерний комбинатор «>»: старая (зачёркнутая) цена */
+.product-card__price > s {
+  color: var(--color-text-muted);
+  font-size: var(--fs-xs);
+}
+
+
+/* ==========================================================================
+   9. САЙДБАР <aside>
+   Сам сайдбар — ячейка общего Grid-макета (область "sidebar"),
+   а блоки внутри него выстроены FLEX-колонкой
+   ========================================================================== */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-l);
+  align-self: start;
+}
+
+.sidebar__title {
+  font-size: var(--fs-xl);
+  font-weight: 800;
+}
+
+.sidebar__block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-m);
+  padding: var(--space-l);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-m);
+  background-color: var(--color-surface);
+}
+
+.sidebar__block-title {
+  font-size: var(--fs-m);
+  font-weight: 800;
+}
+
+/* --- Категории --- */
+.categories {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.categories a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5em 0.75em;
+  border-radius: var(--radius-s);
+  color: var(--color-text);
+  text-decoration: none;
+  transition: background-color var(--transition), color var(--transition), padding var(--transition);
+}
+
+.categories a:hover {
+  padding-left: 1.1em;
+  background-color: var(--color-surface-alt);
+  color: var(--color-primary);
+}
+
+.categories__count {
+  padding: 1px 8px;
+  border-radius: var(--radius-pill);
+  background-color: var(--color-surface-alt);
+  color: var(--color-text-muted);
+  font-size: var(--fs-xs);
+  transition: background-color var(--transition), color var(--transition);
+}
+
+/* Наведение на ссылку меняет вложенный счётчик (потомок) */
+.categories a:hover .categories__count {
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
+}
+
+/* --- Фильтры --- */
+.filter {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-l);
+}
+
+.filter__group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.filter__legend {
+  margin-bottom: var(--space-s);
+  padding: 0;
+  color: var(--color-text-muted);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.filter__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+}
+
+.filter__input {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--color-primary);
+  cursor: pointer;
+}
+
+.filter__label {
+  cursor: pointer;
+  transition: color var(--transition);
+}
+
+/* :checked + соседний комбинатор «+»: подпись выбранного чекбокса */
+.filter__input:checked + .filter__label {
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.filter__item:hover .filter__label {
+  color: var(--color-primary);
+}
+
+/* «Чипсы» цены: radio спрятан, стилизуется соседний <label> */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-s);
+}
+
+.chip {
+  padding: 0.35em 0.85em;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-s);
+  cursor: pointer;
+  transition: background-color var(--transition), color var(--transition), border-color var(--transition);
+}
+
+.chip:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.chip__input:checked + .chip {
+  border-color: var(--color-primary);
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
+}
+
+.chip__input:focus-visible + .chip {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+/* --- Товар дня --- */
+.promo {
+  border: 0;
+  background: var(--gradient-promo);
+  color: #ffffff;
+}
+
+.promo__img {
+  width: 70%;
+  margin-inline: auto;
+  transition: transform 0.4s ease;
+}
+
+.promo:hover .promo__img {
+  transform: scale(1.06) rotate(3deg);
+}
+
+.promo__text {
+  font-size: var(--fs-s);
+  opacity: 0.9;
+}
+
+.promo__price data {
+  font-size: var(--fs-xl);
+  font-weight: 800;
+}
+
+.promo__price s {
+  margin-left: var(--space-s);
+  opacity: 0.7;
+}
+
+.promo .btn {
+  align-self: flex-start;
+}
+
+/* --- Подписка --- */
+.subscribe {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+}
+
+.subscribe__input {
+  width: 100%;
+  padding: 0.7em 1em;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-s);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font: inherit;
+  transition: border-color var(--transition);
+}
+
+.subscribe__input:focus {
+  border-color: var(--color-primary);
+}
+
+/* Цепочка псевдоклассов: поле заполнено (:not(:placeholder-shown)),
+   но e-mail неверный (:invalid) → красная рамка и подсказка
+   (общий соседний комбинатор «~») */
+.subscribe__input:invalid:not(:placeholder-shown) {
+  border-color: var(--color-accent);
+}
+
+.subscribe__input:valid:not(:placeholder-shown) {
+  border-color: var(--color-success);
+}
+
+.subscribe__hint {
+  display: none;
+  color: var(--color-accent);
+  font-size: var(--fs-xs);
+}
+
+.subscribe__input:invalid:not(:placeholder-shown) ~ .subscribe__hint {
+  display: block;
+}
+
+
+/* ==========================================================================
+   10. ПОДВАЛ — FLEXBOX
+   ========================================================================== */
+.site-footer {
+  padding-top: var(--space-xxl);
+  background-color: var(--color-footer-bg);
+  color: var(--color-footer-text);
+  font-size: var(--fs-s);
+}
+
+/* FLEXBOX: колонки подвала; «О магазине» вдвое шире (flex-grow: 2) */
+.footer__top {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-xl);
+  padding-bottom: var(--space-xl);
+}
+
+.footer__col {
+  flex: 1 1 200px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-m);
+}
+
+.footer__col--about {
+  flex: 2 1 280px;
+}
+
+.footer__title {
+  color: #ffffff;
+  font-size: var(--fs-m);
+  font-weight: 800;
+}
+
+.footer__text {
+  max-width: 40ch;
+}
+
+.footer__links {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Потомок + псевдокласс: ссылки подвала сдвигаются при наведении */
+.site-footer a {
+  color: var(--color-footer-text);
+  text-decoration: none;
+  transition: color var(--transition), transform var(--transition), background-color var(--transition);
+}
+
+.footer__links a {
+  display: inline-block;
+}
+
+.site-footer a:hover {
+  color: #ffffff;
+}
+
+.footer__links a:hover {
+  transform: translateX(4px);
+}
+
+.footer__address {
+  font-style: normal;
+  line-height: 1.9;
+}
+
+/* FLEXBOX: иконки соцсетей в ряд */
+.socials {
+  display: flex;
+  gap: var(--space-s);
+}
+
+.site-footer .social {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.08);
+  font-size: var(--fs-xs);
+  font-weight: 800;
+}
+
+.site-footer .social:hover {
+  background-color: var(--color-primary);
+  color: #ffffff;
+  transform: translateY(-3px);
+}
+
+/* FLEXBOX: копирайт слева, автор справа */
+.footer__bottom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-s) var(--space-l);
+  padding-block: var(--space-l);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: var(--fs-xs);
+}
+
+
+/* ==========================================================================
+   11. АДАПТИВНОСТЬ
+   ========================================================================== */
+
+/* Планшеты: Grid-макет перестраивается в одну колонку —
+   достаточно переписать grid-template-areas, HTML не меняется */
+@media (max-width: 960px) {
+  .page-layout {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "hero"
+      "features"
+      "products"
+      "sidebar";
+    gap: var(--space-xl);
+  }
+
+  /* В одну колонку блоки сайдбара раскладываются плиткой (Grid) */
+  .sidebar {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+    align-items: start;
+  }
+
+  .sidebar__title {
+    grid-column: 1 / -1;       /* заголовок на всю ширину сетки */
+  }
+}
+
+/* Телефоны: меню переносится на отдельную строку и прокручивается */
+@media (max-width: 720px) {
+  .site-nav {
+    order: 3;                  /* Flexbox: меняем визуальный порядок */
+    flex-basis: 100%;
+  }
+
+  .nav__list {
+    overflow-x: auto;
+    padding-bottom: var(--space-xs);
+  }
+
+  .hero {
+    padding: var(--space-l);
+  }
+
+  .section-title,
+  .sidebar__title {
+    font-size: var(--fs-l);
+  }
+}
+
+/* Для пользователей, отключивших анимации в системе */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

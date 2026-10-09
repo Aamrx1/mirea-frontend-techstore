@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="TechStore — условный интернет-магазин электроники. Практическая работа по вёрстке: HTML5-семантика, Flexbox, CSS Grid, CSS-переменные.">
+  <meta name="author" content="Мурад Асланов, БСБО-23-24">
+  <title>TechStore — магазин электроники</title>
+
+  <link rel="icon" href="images/logo.svg" type="image/svg+xml">
+
+  <!-- Шрифт Manrope (с поддержкой кириллицы) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- Скрипт подключён в <head> без defer: он сразу ставит сохранённую тему
+       на <html>, чтобы страница не «мигала» светлой темой перед тёмной -->
+  <script src="js/theme.js"></script>
+</head>
+<body>
+  <!-- Ссылка для клавиатурной навигации: видна только при фокусе (:focus) -->
+  <a class="skip-link" href="#main">Перейти к содержимому</a>
+
+  <!-- ================= ШАПКА (header + nav на FLEXBOX) ================= -->
+  <header class="site-header" id="top">
+    <div class="container site-header__inner">
+      <a class="logo" href="#top">
+        <img class="logo__img" src="images/logo.svg" alt="Логотип TechStore" width="36" height="36">
+        <span>Tech<span class="logo__accent">Store</span></span>
+      </a>
+
+      <nav class="site-nav" aria-label="Основная навигация">
+        <ul class="nav__list">
+          <li><a class="nav__link" href="#top" aria-current="page">Главная</a></li>
+          <li><a class="nav__link" href="#features">Преимущества</a></li>
+          <li><a class="nav__link" href="#products">Популярное</a></li>
+          <li><a class="nav__link" href="#catalog">Каталог</a></li>
+          <li><a class="nav__link" href="#contacts">Контакты</a></li>
+        </ul>
+      </nav>
+
+      <div class="header__actions">
+        <!-- Кнопка переключения темы: JS меняет data-theme у <html>,
+             а CSS-переменные подставляют другую палитру -->
+        <button class="icon-btn theme-toggle" type="button" aria-pressed="false" aria-label="Включить тёмную тему">
+          <svg class="theme-toggle__icon theme-toggle__icon--moon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+            <path fill="currentColor" d="M21 14.5A9 9 0 0 1 9.5 3a7.5 7.5 0 1 0 11.5 11.5Z"/>
+          </svg>
+          <svg class="theme-toggle__icon theme-toggle__icon--sun" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+            <circle cx="12" cy="12" r="4.5" fill="currentColor"/>
+            <g stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>
+            </g>
+          </svg>
+        </button>
+
+        <a class="icon-btn cart-link" href="#products" aria-label="Корзина: 0 товаров">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+            <path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  d="M3 4h2l2.4 11.2a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 1.9-1.5L21 8H6.2"/>
+            <circle cx="10" cy="20.5" r="1.3" fill="currentColor"/>
+            <circle cx="17" cy="20.5" r="1.3" fill="currentColor"/>
+          </svg>
+          <span class="cart-link__count" aria-hidden="true">0</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= ОСНОВНОЕ СОДЕРЖИМОЕ =================
+       <main> — это GRID-макет страницы с именованными областями:
+       hero / features / products + sidebar (см. .page-layout в CSS) -->
+  <main class="container page-layout" id="main">
+
+    <!-- ---------- Первый экран ---------- -->
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero__content">
+        <p class="hero__eyebrow">Новый сезон · скидки до 30%</p>
+        <h1 class="hero__title" id="hero-title">Техника, которая <em>работает на вас</em></h1>
+        <p class="hero__lead">
+          Смартфоны, ноутбуки, аудио и гаджеты от проверенных брендов.
+          Официальная гарантия, доставка за 1 день и честные цены.
+        </p>
+        <div class="hero__actions">
+          <a class="btn btn--primary" href="#products">Смотреть товары</a>
+          <a class="btn btn--ghost" href="#features">Почему мы</a>
+        </div>
+        <ul class="hero__stats">
+          <li><strong>50 000+</strong> довольных клиентов</li>
+          <li><strong>2 года</strong> гарантии</li>
+          <li><strong>24/7</strong> поддержка</li>
+        </ul>
+      </div>
+      <div class="hero__media">
+        <img src="images/hero.svg" alt="Иллюстрация: ноутбук, смартфон и умные часы из ассортимента TechStore" width="480" height="360">
+      </div>
+    </section>
+
+    <!-- ---------- Преимущества (FLEXBOX) ---------- -->
+    <section class="features" id="features" aria-labelledby="features-title">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title" id="features-title">Почему выбирают TechStore</h2>
+          <p class="section-lead">Четыре причины покупать технику у нас</p>
+        </div>
+      </div>
+
+      <div class="features__list">
+        <article class="feature">
+          <span class="feature__icon" aria-hidden="true">🚚</span>
+          <h3 class="feature__title">Быстрая доставка</h3>
+          <p class="feature__text">Привезём заказ за 1 день по городу и за 2–5 дней по всей России.</p>
+        </article>
+        <article class="feature">
+          <span class="feature__icon" aria-hidden="true">🛡️</span>
+          <h3 class="feature__title">Официальная гарантия</h3>
+          <p class="feature__text">Только сертифицированная техника с гарантией производителя до 2 лет.</p>
+        </article>
+        <article class="feature">
+          <span class="feature__icon" aria-hidden="true">💳</span>
+          <h3 class="feature__title">Удобная оплата</h3>
+          <p class="feature__text">Картой, СБП или в рассрочку 0% без переплат на срок до 12 месяцев.</p>
+        </article>
+        <article class="feature">
+          <span class="feature__icon" aria-hidden="true">🔄</span>
+          <h3 class="feature__title">Лёгкий возврат</h3>
+          <p class="feature__text">Не подошёл товар — вернём деньги в течение 14 дней без лишних вопросов.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- ---------- Популярные товары (CSS GRID) ---------- -->
+    <section class="products" id="products" aria-labelledby="products-title">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title" id="products-title">Популярные товары</h2>
+          <p class="section-lead">Хиты продаж этой недели</p>
+        </div>
+        <a class="link-more" href="#catalog">Весь каталог →</a>
+      </div>
+
+      <!-- .products__grid — сетка карточек на CSS Grid (auto-fill + minmax) -->
+      <div class="products__grid">
+
+        <article class="product-card" data-badge="Хит">
+          <figure class="product-card__media">
+            <img src="images/smartphone.svg" alt="Смартфон Nova X12 с фиолетово-синим экраном" width="240" height="180" loading="lazy">
+          </figure>
+          <div class="product-card__body">
+            <p class="product-card__category">Смартфоны</p>
+            <h3 class="product-card__title">Nova X12</h3>
+            <ul class="product-card__specs">
+              <li>6,7″ OLED</li><li>256 ГБ</li><li>5G</li>
+            </ul>
+            <p class="product-card__rating"><span class="star" aria-hidden="true">★</span> 4,8 <span class="product-card__reviews">(1 204 отзыва)</span></p>
+          </div>
+          <footer class="product-card__footer">
+            <p class="product-card__price"><data value="79990">79 990 ₽</data> <s>89 990 ₽</s></p>
+            <button class="btn btn--primary btn--small" type="button">В корзину</button>
+          </footer>
+        </article>
+
+        <article class="product-card" data-badge="Новинка">
+          <figure class="product-card__media">
+            <img src="images/laptop.svg" alt="Ноутбук AeroBook 14 Pro с открытой крышкой" width="240" height="180" loading="lazy">
+          </figure>
+          <div class="product-card__body">
+            <p class="product-card__category">Ноутбуки</p>
+            <h3 class="product-card__title">AeroBook 14 Pro</h3>
+            <ul class="product-card__specs">
+              <li>14″ 2.8K</li><li>16 ГБ ОЗУ</li><li>1 ТБ SSD</li>
+            </ul>
+            <p class="product-card__rating"><span class="star" aria-hidden="true">★</span> 4,9 <span class="product-card__reviews">(532 отзыва)</span></p>
+          </div>
+          <footer class="product-card__footer">
+            <p class="product-card__price"><data value="124990">124 990 ₽</data></p>
+            <button class="btn btn--primary btn--small" type="button">В корзину</button>
+          </footer>
+        </article>
+
+        <article class="product-card" data-badge="Скидка">
+          <figure class="product-card__media">
+            <img src="images/headphones.svg" alt="Беспроводные наушники SoundWave ANC с оранжевыми амбушюрами" width="240" height="180" loading="lazy">
+          </figure>
+          <div class="product-card__body">
+            <p class="product-card__category">Наушники</p>
+            <h3 class="product-card__title">SoundWave ANC</h3>
+            <ul class="product-card__specs">
+              <li>Шумоподавление</li><li>40 ч работы</li>
+            </ul>
+            <p class="product-card__rating"><span class="star" aria-hidden="true">★</span> 4,7 <span class="product-card__reviews">(2 318 отзывов)</span></p>
+          </div>
+          <footer class="product-card__footer">
+            <p class="product-card__price"><data value="12490">12 490 ₽</data> <s>15 990 ₽</s></p>
+            <button class="btn btn--primary btn--small" type="button">В корзину</button>
+          </footer>
+        </article>
+
+        <article class="product-card">
+          <figure class="product-card__media">
+            <img src="images/smartwatch.svg" alt="Умные часы Pulse Watch 3 с тёмным ремешком" width="240" height="180" loading="lazy">
+          </figure>
+          <div class="product-card__body">
+            <p class="product-card__category">Умные часы</p>
+            <h3 class="product-card__title">Pulse Watch 3</h3>
+            <ul class="product-card__specs">
+              <li>AMOLED</li><li>GPS</li><li>Пульсоксиметр</li>
+            </ul>
+            <p class="product-card__rating"><span class="star" aria-hidden="true">★</span> 4,6 <span class="product-card__reviews">(876 отзывов)</span></p>
+          </div>
+          <footer class="product-card__footer">
+            <p class="product-card__price"><data value="18990">18 990 ₽</data></p>
+            <button class="btn btn--primary btn--small" type="button">В корзину</button>
+          </footer>
+        </article>
+
+        <article class="product-card">
+          <figure class="product-card__media">
+            <img src="images/tablet.svg" alt="Планшет TabOne 11 с ярким экраном" width="240" height="180" loading="lazy">
+          </figure>
+          <div class="product-card__body">
+            <p class="product-card__category">Планшеты</p>
+            <h3 class="product-card__title">TabOne 11</h3>
+            <ul class="product-card__specs">
+              <li>11″ 120 Гц</li><li>128 ГБ</li><li>Стилус</li>
+            </ul>
+            <p class="product-card__rating"><span class="star" aria-hidden="true">★</span> 4,7 <span class="product-card__reviews">(411 отзывов)</span></p>
+          </div>
+          <footer class="product-card__footer">
+            <p class="product-card__price"><data value="42990">42 990 ₽</data></p>
+            <button class="btn btn--primary btn--small" type="button">В корзину</button>
+          </footer>
+        </article>
+
+        <article class="product-card" data-badge="Хит">
+          <figure class="product-card__media">
+            <img src="images/gamepad.svg" alt="Беспроводной геймпад NeoPlay с цветными кнопками" width="240" height="180" loading="lazy">
+          </figure>
+          <div class="product-card__body">
+            <p class="product-card__category">Гейминг</p>
+            <h3 class="product-card__title">Геймпад NeoPlay</h3>
+            <ul class="product-card__specs">
+              <li>Bluetooth 5.3</li><li>Вибрация</li><li>ПК / консоли</li>
+            </ul>
+            <p class="product-card__rating"><span class="star" aria-hidden="true">★</span> 4,8 <span class="product-card__reviews">(1 590 отзывов)</span></p>
+          </div>
+          <footer class="product-card__footer">
+            <p class="product-card__price"><data value="6490">6 490 ₽</data></p>
+            <button class="btn btn--primary btn--small" type="button">В корзину</button>
+          </footer>
+        </article>
+
+        <article class="product-card" data-badge="Скидка">
+          <figure class="product-card__media">
+            <img src="images/speaker.svg" alt="Портативная колонка BoomCore Mini с подсветкой" width="240" height="180" loading="lazy">
+          </figure>
+          <div class="product-card__body">
+            <p class="product-card__category">Аудио</p>
+            <h3 class="product-card__title">BoomCore Mini</h3>
+            <ul class="product-card__specs">
+              <li>20 Вт</li><li>IP67</li><li>24 ч работы</li>
+            </ul>
+            <p class="product-card__rating"><span class="star" aria-hidden="true">★</span> 4,5 <span class="product-card__reviews">(640 отзывов)</span></p>
+          </div>
+          <footer class="product-card__footer">
+            <p class="product-card__price"><data value="7990">7 990 ₽</data> <s>9 490 ₽</s></p>
+            <button class="btn btn--primary btn--small" type="button">В корзину</button>
+          </footer>
+        </article>
+
+        <article class="product-card">
+          <figure class="product-card__media">
+            <img src="images/camera.svg" alt="Беззеркальная фотокамера Optika M50 с объективом" width="240" height="180" loading="lazy">
+          </figure>
+          <div class="product-card__body">
+            <p class="product-card__category">Фото</p>
+            <h3 class="product-card__title">Optika M50</h3>
+            <ul class="product-card__specs">
+              <li>24 Мп</li><li>4K-видео</li><li>Wi-Fi</li>
+            </ul>
+            <p class="product-card__rating"><span class="star" aria-hidden="true">★</span> 4,8 <span class="product-card__reviews">(298 отзывов)</span></p>
+          </div>
+          <footer class="product-card__footer">
+            <p class="product-card__price"><data value="69990">69 990 ₽</data></p>
+            <button class="btn btn--primary btn--small" type="button">В корзину</button>
+          </footer>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- ---------- Сайдбар <aside>: встроен в Grid-макет <main> (область sidebar) ---------- -->
+    <aside class="sidebar" id="catalog" aria-labelledby="sidebar-title">
+      <h2 class="sidebar__title" id="sidebar-title">Каталог</h2>
+
+      <section class="sidebar__block" aria-labelledby="categories-title">
+        <h3 class="sidebar__block-title" id="categories-title">Категории</h3>
+        <ul class="categories">
+          <li><a href="#products">Смартфоны <span class="categories__count">128</span></a></li>
+          <li><a href="#products">Ноутбуки <span class="categories__count">94</span></a></li>
+          <li><a href="#products">Наушники <span class="categories__count">156</span></a></li>
+          <li><a href="#products">Умные часы <span class="categories__count">63</span></a></li>
+          <li><a href="#products">Планшеты <span class="categories__count">41</span></a></li>
+          <li><a href="#products">Гейминг <span class="categories__count">77</span></a></li>
+        </ul>
+      </section>
+
+      <section class="sidebar__block" aria-labelledby="filters-title">
+        <h3 class="sidebar__block-title" id="filters-title">Фильтры</h3>
+        <form class="filter" action="#" onsubmit="return false">
+          <fieldset class="filter__group">
+            <legend class="filter__legend">Бренд</legend>
+            <div class="filter__item">
+              <input class="filter__input" type="checkbox" id="brand-nova" checked>
+              <label class="filter__label" for="brand-nova">Nova</label>
+            </div>
+            <div class="filter__item">
+              <input class="filter__input" type="checkbox" id="brand-aero">
+              <label class="filter__label" for="brand-aero">AeroBook</label>
+            </div>
+            <div class="filter__item">
+              <input class="filter__input" type="checkbox" id="brand-sound">
+              <label class="filter__label" for="brand-sound">SoundWave</label>
+            </div>
+            <div class="filter__item">
+              <input class="filter__input" type="checkbox" id="brand-pulse">
+              <label class="filter__label" for="brand-pulse">Pulse</label>
+            </div>
+          </fieldset>
+
+          <fieldset class="filter__group">
+            <legend class="filter__legend">Цена</legend>
+            <div class="chips">
+              <input class="chip__input visually-hidden" type="radio" name="price" id="price-1">
+              <label class="chip" for="price-1">до 10 000 ₽</label>
+              <input class="chip__input visually-hidden" type="radio" name="price" id="price-2" checked>
+              <label class="chip" for="price-2">10–50 тыс.</label>
+              <input class="chip__input visually-hidden" type="radio" name="price" id="price-3">
+              <label class="chip" for="price-3">от 50 000 ₽</label>
+            </div>
+          </fieldset>
+        </form>
+      </section>
+
+      <section class="sidebar__block promo" aria-labelledby="promo-title">
+        <h3 class="sidebar__block-title" id="promo-title">Товар дня</h3>
+        <img class="promo__img" src="images/smartwatch.svg" alt="Умные часы Pulse Watch 3 — товар дня" width="240" height="180" loading="lazy">
+        <p class="promo__text">Pulse Watch 3 со скидкой 25% — только до полуночи.</p>
+        <p class="promo__price"><data value="14240">14 240 ₽</data> <s>18 990 ₽</s></p>
+        <a class="btn btn--light btn--small" href="#products">Забрать скидку</a>
+      </section>
+
+      <section class="sidebar__block" aria-labelledby="subscribe-title">
+        <h3 class="sidebar__block-title" id="subscribe-title">Подписка на скидки</h3>
+        <form class="subscribe" action="#" onsubmit="return false">
+          <label class="visually-hidden" for="subscribe-email">Ваш e-mail</label>
+          <input class="subscribe__input" type="email" id="subscribe-email" placeholder="you@example.com" required>
+          <!-- Подсказка показывается чистым CSS: input:invalid:not(:placeholder-shown) ~ .subscribe__hint -->
+          <p class="subscribe__hint">Введите корректный e-mail</p>
+          <button class="btn btn--primary btn--small" type="submit">Подписаться</button>
+        </form>
+      </section>
+    </aside>
+
+  </main>
+
+  <!-- ================= ПОДВАЛ (FLEXBOX) ================= -->
+  <footer class="site-footer" id="contacts">
+    <div class="container footer__top">
+      <section class="footer__col footer__col--about" aria-labelledby="footer-about">
+        <h2 class="footer__title" id="footer-about">TechStore</h2>
+        <p class="footer__text">Интернет-магазин электроники и гаджетов. Работаем с 2015 года и доставляем технику по всей России.</p>
+        <div class="socials">
+          <a class="social" href="#contacts" aria-label="ВКонтакте">VK</a>
+          <a class="social" href="#contacts" aria-label="Telegram">TG</a>
+          <a class="social" href="#contacts" aria-label="YouTube">YT</a>
+        </div>
+      </section>
+
+      <nav class="footer__col" aria-labelledby="footer-buyers">
+        <h2 class="footer__title" id="footer-buyers">Покупателям</h2>
+        <ul class="footer__links">
+          <li><a href="#features">Доставка и оплата</a></li>
+          <li><a href="#features">Гарантия и возврат</a></li>
+          <li><a href="#catalog">Каталог товаров</a></li>
+          <li><a href="#products">Акции и скидки</a></li>
+        </ul>
+      </nav>
+
+      <section class="footer__col" aria-labelledby="footer-contacts">
+        <h2 class="footer__title" id="footer-contacts">Контакты</h2>
+        <address class="footer__address">
+          г. Москва, пр-т Вернадского, 78<br>
+          <a href="tel:+78001234567">8 800 123-45-67</a><br>
+          <a href="mailto:info@techstore.example">info@techstore.example</a>
+        </address>
+        <p class="footer__text">Ежедневно с 9:00 до 21:00</p>
+      </section>
+    </div>
+
+    <div class="container footer__bottom">
+      <p>© 2026 TechStore. Учебный проект, магазин вымышленный.</p>
+      <p>Практическая работа · Мурад Асланов, БСБО-23-24</p>
+    </div>
+  </footer>
+</body>
+</html>
